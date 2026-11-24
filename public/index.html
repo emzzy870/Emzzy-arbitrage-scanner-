@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emzzy Arbitrage Scanner</title>
+<style>
+body{background:#0b1220;color:white;font-family:Arial;padding:20px}
+.card{background:#19263a;padding:18px;border-radius:12px;margin-bottom:15px}
+input{padding:12px;width:90%;margin:8px 0}
+button{padding:14px;background:#39d6a3;border:0;border-radius:8px;width:100%;font-weight:bold}
+h1{color:#39d6a3}
+</style>
+</head>
+<body>
+<h1>⚡ Emzzy Arbitrage Scanner</h1>
+
+<div class="card">
+<h3>Bankroll (₦)</h3>
+<input id="bank" type="number" value="50000">
+<h3>Minimum ROI (%)</h3>
+<input id="roi" type="number" value="2">
+</div>
+
+<div class="card">
+<h3>SportyBet odds</h3>
+<input id="s1" placeholder="Home">
+<input id="s2" placeholder="Draw">
+<input id="s3" placeholder="Away">
+</div>
+
+<div class="card">
+<h3>Bet9ja odds</h3>
+<input id="b1" placeholder="Home">
+<input id="b2" placeholder="Draw">
+<input id="b3" placeholder="Away">
+</div>
+
+<button onclick="scan()">SCAN FOR ARBITRAGE</button>
+<div class="card" id="result"></div>
+
+<script>
+function scan(){
+let odds=[
+Math.max(+s1.value||0,+b1.value||0),
+Math.max(+s2.value||0,+b2.value||0),
+Math.max(+s3.value||0,+b3.value||0)
+];
+if(odds.some(x=>x<=1)){
+result.innerHTML="Enter valid odds for all outcomes.";
+return;
+}
+let sum=odds.reduce((a,b)=>a+1/b,0);
+let profit=(1/sum-1)*100;
+let bank=+document.getElementById("bank").value;
+let returns=bank/sum;
+result.innerHTML=`<h2>${profit.toFixed(2)}% ROI</h2>`+
+(profit>0?`<h3>Profit: ₦${(returns-bank).toFixed(2)}</h3>`:"No arbitrage found.")+
+odds.map((o,i)=>`<p>Outcome ${i+1}: ${o} — Stake ₦${(bank/o/sum).toFixed(2)}</p>`).join("");
+}
+</script>
+</body>
+  </html>
